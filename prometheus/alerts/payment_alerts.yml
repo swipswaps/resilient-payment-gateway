@@ -1,0 +1,38 @@
+groups:
+  - name: payment_security_and_performance
+    rules:
+      - alert: HighPaymentFailureRate
+        expr: |
+          (
+            sum(rate(payment_transactions_total{status="failed"}[5m]))
+            /
+            sum(rate(payment_transactions_total[5m]))
+          ) * 100 > 15
+        for: 2m
+        labels:
+          severity: critical
+          category: payments
+        annotations:
+          summary: "High payment transaction failure rate detected"
+          description: "Payment failure rate has exceeded 15% over the last 5 minutes (Current: {{ $value | printf \"%.2f\" }}%)."
+
+      - alert: ProviderExecutionLatencyDegraded
+        expr: |
+          histogram_quantile(0.95, sum(rate(payment_execution_duration_seconds_bucket[5m])) by (le, provider)) > 2.0
+        for: 3m
+        labels:
+          severity: warning
+          category: latency
+        annotations:
+          summary: "Payment provider latency p95 > 2 seconds"
+          description: "The 95th percentile execution duration for provider '{{ $labels.provider }}' is {{ $value | printf \"%.2f\" }}s."
+
+      - alert: IdempotencyLockContentionSpike
+        expr: rate(idempotency_cache_requests_total{hit="false"}[5m]) > 50
+        for: 1m
+        labels:
+          severity: warning
+          category: middleware
+        annotations:
+          summary: "Elevated cache miss rate on idempotent payment requests"
+          description: "Uncached payment execution requests exceed 50 req/s."

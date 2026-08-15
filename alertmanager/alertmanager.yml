@@ -1,0 +1,15 @@
+global:
+  resolve_timeout: 5m
+
+route:
+  group_by: ['alertname', 'cluster', 'service']
+  group_wait: 10s
+  group_interval: 30s
+  repeat_interval: 2h
+  receiver: 'payment-webhook-notifications'
+
+receivers:
+  - name: 'payment-webhook-notifications'
+    webhook_configs:
+      - url: 'http://host.docker.internal:8000/api/v1/webhooks/subscribe'
+        send_resolved: true
