@@ -1,5 +1,5 @@
 #!/bin/bash
-# Automated GitHub push with Pages deployment – no placeholders.
+# Automated GitHub push with Pages deployment – non‑interactive.
 
 set -e
 
@@ -25,9 +25,11 @@ git branch -M main
 git push -u origin main --force
 
 echo "📦 Building frontend (Vite/React)..."
-mkdir -p frontend
+
+# Use --no-interactive to skip all prompts, --eslint to choose ESLint over Oxlint
+npx create-vite@latest frontend --template react --no-interactive --eslint
+
 cd frontend
-npm create vite@latest . -- --template react --yes
 npm install
 npm run build
 cd ..
