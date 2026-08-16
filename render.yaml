@@ -2,6 +2,7 @@ services:
   - type: web
     name: payment-gateway-api
     runtime: python
+    plan: free
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
     envVars:
@@ -9,7 +10,7 @@ services:
         fromService:
           type: redis
           name: payment-gateway-redis
-          property: connectionString   # <-- required
+          property: connectionString
       - key: CORS_ORIGINS
         value: https://swipswaps.github.io
       - key: PYTHON_VERSION
@@ -17,4 +18,4 @@ services:
   - type: redis
     name: payment-gateway-redis
     plan: free
-    ipAllowList: []                  # <-- required
+    ipAllowList: []
