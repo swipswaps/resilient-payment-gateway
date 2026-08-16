@@ -9,6 +9,7 @@ services:
         fromService:
           type: redis
           name: payment-gateway-redis
+          property: connectionString   # <-- required
       - key: CORS_ORIGINS
         value: https://swipswaps.github.io
       - key: PYTHON_VERSION
@@ -16,3 +17,4 @@ services:
   - type: redis
     name: payment-gateway-redis
     plan: free
+    ipAllowList: []                  # <-- required
